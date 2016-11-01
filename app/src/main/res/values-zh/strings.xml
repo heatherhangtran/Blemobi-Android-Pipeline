@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Blemobi Android Pipeline</string>
+    <string name="action_settings">这是设置菜单。</string>
+    <string name="hello_blemobi" translatable="false">你好 , Blemobi!</string>
+    <string name="fab_button">您按下了按钮fab。</string>
+</resources>
