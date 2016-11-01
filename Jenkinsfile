@@ -5,7 +5,6 @@ node("linux && jdk8") {
     stage "Build/Analyse/Test"
     sh "./gradlew clean build"
     archiveUnitTestResults()
-    archiveCheckstyleResults()
 }
     
     def archiveUnitTestResults() {
