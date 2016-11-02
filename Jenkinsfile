@@ -22,7 +22,7 @@ node {
 
 @NonCPS
 def flavor(branchName) {
-    def matcher = (env.BRANCH_NAME =~ /QA_([a-z_]+)/)
+    def matcher = (Blemobi-Android-Pipeline =~ /QA_([a-z_]+)/)
     assert matcher.matches()
     matcher[0][1]
 }
