@@ -1,36 +1,30 @@
-node {
-    stage 'Stage Checkout'
-    checkout scm
-    
-    sh 'git submodule update --init'
-    
-    stage 'Stage Build'
-    echo "My branch is: Blemobi-Android-Pipeline"
+stage ('build deploy') { 
+     node{
+         dir ('src/github.com/heatherhangtran/Blemobi-Android-Pipeline'){
+         git branch: '${BUILD_BRANCH}', credentialsId: 'JenkinsHK', url: 'https://github.com/blemobi/Blemobi-Android-Pipeline.git'
+     }
+         
+     sh 'chmod +x gradlew'
+     stage "test"
+     sh './gradlew clean test'
 
-    def flavor = flavor(Blemobi-Android-Pipeline)
-    echo "Building flavor ${flavor}"
-    
-    sh "./gradlew clean assemble${flavor}Debug -PBUILD_NUMBER=${env.BUILD_NUMBER}"
-
-    stage 'Stage Archive'
+     stage "build"
+     sh './gradlew build createPom'
  
-    step([$class: 'ArtifactArchiver', artifacts: 'App/build/outputs/apk/*.apk', fingerprint: true])
+     sh """
+     if [[ ${release} == "true"  &&   -v releaseVersion ]]
+     then
+     export GITHUB_TOKEN=${TOKEN}
+        cd $WORKSPACE/src/github.com/blemobi/${JOB_NAME}
+	    github-release release \
+                  --user blemobi \
+ 	              --repo ${JOB_NAME} \
+     	          --tag ${releaseVersion} \
+ 		          --name "${JOB_NAME} ${releaseVersion}" \
+    	          --description "${JOB_NAME} ${releaseVersion}" 
+        fi 	 
+        """       
+ }
 
-    stage 'Stage Upload To Fabric'
-    sh "./gradlew crashlyticsUploadDistribution${flavor}Debug  -PBUILD_NUMBER=${env.BUILD_NUMBER}"
-}
 
-@NonCPS
-def flavor(branchName) {
-    def matcher = (Blemobi-Android-Pipeline =~ /QA_([a-z_]+)/)
-    assert matcher.matches()
-    matcher[0][1]
-}
-    /*
-    git url: "https://github.com/heatherhangtran/Blemobi-Android-Pipeline"
-    
-    stage "Build"
-    sh "./gradlew clean build"
-    sh "./gradlew assemble"
-    */
       
