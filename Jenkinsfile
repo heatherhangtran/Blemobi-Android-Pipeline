@@ -5,9 +5,9 @@ node {
     sh 'git submodule update --init'
     
     stage 'Stage Build'
-    echo "My branch is: ${env.BRANCH_NAME)"
+    echo "My branch is: Blemobi-Android-Pipeline"
 
-    def flavor = flavor(env.BRANCH_NAME)
+    def flavor = flavor(Blemobi-Android-Pipeline)
     echo "Building flavor ${flavor}"
     
     sh "./gradlew clean assemble${flavor}Debug -PBUILD_NUMBER=${env.BUILD_NUMBER}"
